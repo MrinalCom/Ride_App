@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { authStyles } from "@/styles/authStyles";
@@ -13,10 +14,21 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import CustomText from "@/components/shared/CustomText";
 import { useWS } from "@/service/WSProvider";
 import PhoneInput from "@/components/shared/PhoneInput";
+import CustomButton from "@/components/shared/CustomButton";
+import { signin } from "@/service/authService";
 
 const Auth = () => {
   const { updateAccessToken } = useWS();
   const [phone, setPhone] = useState("");
+
+  const handleNext = async () => {
+    if (!phone && phone.length < 10) {
+      Alert.alert("Please enter a valid phone number");
+      return;
+    }
+    signin({ role: "customer", phone }, updateAccessToken);
+  };
+
   return (
     <SafeAreaView style={authStyles.container}>
       <ScrollView contentContainerStyle={authStyles.container}>
@@ -57,6 +69,13 @@ const Auth = () => {
           By continuing,you agree to the terms of service and privacy policy of
           Ride App
         </CustomText>
+
+        <CustomButton
+          title="Next"
+          onPress={handleNext}
+          loading={false}
+          disabled={false}
+        ></CustomButton>
       </View>
     </SafeAreaView>
   );
